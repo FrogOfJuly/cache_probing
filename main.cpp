@@ -55,20 +55,16 @@ std::pair<std::vector<std::set<int>>, int> record_jumps(int H_ini, int S_ini){
     int H = H_ini;
 
     for (; H < Z / N; H *= 2) {
-        std::cout << "probing stride " << H << "..." << std::endl;
         auto prev_time = timer::measure(H, S_ini);
         std::set<int> new_jumps;
 
         for (int S = S_ini; S <= N; S++) {
             auto curr_time = timer::measure(H, S);
-            std::cout << curr_time << " ";
             if (deltaDiff(curr_time, prev_time)) {
                 new_jumps.insert(S - 1);
-                std::cout << S - 1 << " ";
             }
             prev_time = curr_time;
         }
-        std::cout << std::endl;
 
         bool same = true;
         if (not jumps.empty()) {
@@ -119,18 +115,15 @@ int get_line_size(int cache_size, int cache_assoc){
     for (int L = 1; L <= cache_size; L *= 2) {
         auto prev_time = timer::measure(cache_size / cache_assoc + L, 2);
         int first_jump = -1;
-        std::cout << "probing stride " << cache_size / cache_assoc + L << "..." << std::endl;
         for (int S = 1; S <= 1024; S *= 2) {
             auto curr_time = timer::measure(cache_size / cache_assoc + L, S + 1);
             if (deltaDiff(curr_time, prev_time)) {
                 if (first_jump <= 0) {
                     first_jump = S;
                 }
-                std::cout << S << " ";
             }
             prev_time = curr_time;
         }
-        std::cout << std::endl;
         if (first_jump > prev_first_jump) {
             cache_line_size = L * cache_assoc;
             break;
